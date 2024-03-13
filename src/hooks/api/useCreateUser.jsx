@@ -1,20 +1,18 @@
 import { BASE_URL } from "../../utils";
 import axios from "axios";
 
-const useAddUser = () => {
-  const addUser = async (name, email, password) => {
+const useCreateUser = () => {
+  const createUser = async (data) => {
     try {
       await axios.post(BASE_URL + "/users", {
-        name,
-        email,
-        password,
+        ...data,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  return { addUser };
+  return { createUser };
 };
 
-export default useAddUser;
+export default useCreateUser;

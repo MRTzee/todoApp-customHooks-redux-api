@@ -1,11 +1,9 @@
-import { useEffect } from "react";
 import useGetUsers from "../hooks/api/useGetUsers";
+import { useSelector } from "react-redux";
 
 const Users = () => {
-  const { users, getUsers } = useGetUsers();
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const { users } = useSelector((state) => state.users);
+  useGetUsers();
   return (
     <div className="container">
       <div>

@@ -1,20 +1,25 @@
-import { useState } from "react";
-import { BASE_URL } from "../../utils";
 import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addUsers } from "../../redux/slices/usersSlice";
+import { BASE_URL } from "../../utils";
 
 const useGetUsers = () => {
-  const [users, setUsers] = useState([]);
-
+  const dispatch = useDispatch();
   const getUsers = async () => {
     try {
       const { data } = await axios.get(BASE_URL + "/users");
-      setUsers(data);
+      dispatch(addUsers(data));
     } catch (error) {
       console.log(error);
     }
   };
 
-  return { users, getUsers };
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  return { getUsers };
 };
 
 export default useGetUsers;

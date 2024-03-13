@@ -1,18 +1,27 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import useAddUser from "../hooks/api/useAddUser";
+import useCreateUser from "../hooks/api/useCreateUser";
+import YupPassword from "yup-password";
+import { useNavigate } from "react-router-dom";
+import useGetUserByEmail from "../hooks/api/useGetUserByEmail";
+YupPassword(Yup);
 
 const validationSchema = Yup.object({
-  name: Yup.string()
-    .required("name is required")
-    .min(10, "Min character : 10")
-    .required("Required!"),
+  name: Yup.string().min(6, "Min character : 6").required("Required!"),
   email: Yup.string().email("Invalid email format").required("Required!"),
-  password: Yup.string().min(8, "Min character: 8").required("Required!"),
+  password: Yup.string()
+    .min(6, "Min character: 6")
+    .required("Required!")
+    .minLowercase(1)
+    .minUppercase(1)
+    .minNumbers(1)
+    .minSymbols(1),
 });
 
 const Register = () => {
-  const { addUser } = useAddUser();
+  const { createUser } = useCreateUser();
+  const navigate = useNavigate();
+  const { getUserByEmail } = useGetUserByEmail();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -20,9 +29,12 @@ const Register = () => {
       password: "",
     },
     validationSchema,
-    onSubmit: async (values, { resetForm }) => {
-      await addUser(values.name, values.email, values.password);
-      resetForm();
+    onSubmit: async (values) => {
+      const user = await getUserByEmail(values.email);
+      if (user.length) return alert("email already exist");
+      await createUser(values);
+      alert("create user success");
+      navigate("/users");
     },
   });
 
